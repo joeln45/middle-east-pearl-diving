@@ -76,6 +76,18 @@ nav ul li a:hover {
   color: var(--primary-color);
 }
 
+/* Logo doubles as a link back to the home page */
+.logo a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Highlights the nav link for the page you're currently on */
+.nav__link--active {
+  font-weight: 700;
+  border-bottom: 3px solid var(--accent-color);
+}
+
 #home-page {
   padding-top: 40px; /* Spacing at the top */
 }
@@ -198,7 +210,6 @@ nav ul li a:hover {
   padding: 10px;
   z-index: 1001;
   position: absolute;
-  top: center;
   right: 20px;
 }
 

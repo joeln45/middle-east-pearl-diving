@@ -22,3 +22,6 @@ desktop.ini
 # Environment variables / secrets
 .env
 .env.local
+
+# Session handoff notes (local working file, not part of the project)
+HANDOFF.md
