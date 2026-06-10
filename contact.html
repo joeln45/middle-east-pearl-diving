@@ -14,7 +14,7 @@
   <body>
     <div id="site-header"></div>
 
-    <main class="contact-page">
+    <main id="main-content" tabindex="-1" class="contact-page">
       <div class="container">
         <h2 class="page-title">Let's Work Together</h2>
         <section class="contact-info">
@@ -23,13 +23,26 @@
             <h3>Questions? We'd love to hear from you!</h3>
             <form id="contactForm" action="#" method="post">
               <div class="form-group">
-                <input type="text" name="name" placeholder="Name" required />
-                <input type="email" name="email" placeholder="Email" required />
+                <input type="text" name="name" placeholder="Name" aria-label="Your name" required />
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Email"
+                  aria-label="Your email address"
+                  required
+                />
               </div>
-              <textarea name="message" placeholder="Your Message" required></textarea>
+              <textarea
+                name="message"
+                placeholder="Your Message"
+                aria-label="Your message"
+                required
+              ></textarea>
               <button type="submit" class="btn">Send Message</button>
             </form>
-            <p id="responseMessage" class="response-message">Your message has been sent!</p>
+            <p id="responseMessage" class="response-message" role="status" aria-live="polite">
+              Your message has been sent!
+            </p>
           </div>
         </section>
       </div>

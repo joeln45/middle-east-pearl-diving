@@ -31,13 +31,19 @@ function buildNavLinks() {
 
 function siteHeader() {
   return `
+    <a class="skip-link" href="#main-content">Skip to main content</a>
     <header>
       <div class="container">
         <h1 class="logo"><a href="index.html">Middle East Pearl Diving</a></h1>
-        <button class="menu-toggle" aria-label="Toggle navigation">
+        <button
+          class="menu-toggle"
+          aria-label="Toggle navigation"
+          aria-controls="primary-nav"
+          aria-expanded="false"
+        >
           <span class="menu-icon"><span></span></span>
         </button>
-        <nav class="nav">
+        <nav class="nav" id="primary-nav" aria-label="Primary">
           <ul class="nav__list">
           ${buildNavLinks()}
           </ul>

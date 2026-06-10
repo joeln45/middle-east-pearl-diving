@@ -4,28 +4,37 @@ document.addEventListener("DOMContentLoaded", function () {
   const nav = document.querySelector(".nav"); // Nav menu
   const body = document.body; // Body element for the toggling feature
 
-  // Event listener for the menu toggle
-  if (menuToggle) {
+  if (menuToggle && nav) {
+    // Open/close the mobile nav and keep the button's ARIA state in sync so
+    // screen readers announce whether the menu is expanded or collapsed.
+    const setNavOpen = (open) => {
+      nav.classList.toggle("nav-open", open);
+      menuToggle.classList.toggle("nav-open", open);
+      body.classList.toggle("nav-open", open);
+      menuToggle.setAttribute("aria-expanded", String(open));
+    };
+
     menuToggle.addEventListener("click", () => {
-      // Toggle classes for opeening and closing the nav bar
-      nav.classList.toggle("nav-open");
-      menuToggle.classList.toggle("nav-open");
-      body.classList.toggle("nav-open");
+      setNavOpen(!nav.classList.contains("nav-open"));
+    });
+
+    // Close the nav when clicking outside it, or when a nav link is chosen.
+    document.addEventListener("click", (event) => {
+      const clickedInside = nav.contains(event.target) || menuToggle.contains(event.target);
+      const clickedLink = event.target.classList.contains("nav__link");
+      if (!clickedInside || clickedLink) {
+        setNavOpen(false);
+      }
+    });
+
+    // Escape closes the nav and returns focus to the toggle (keyboard users).
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && nav.classList.contains("nav-open")) {
+        setNavOpen(false);
+        menuToggle.focus();
+      }
     });
   }
-
-  // Closes the nav bar when a link is clicked
-  document.addEventListener("click", (event) => {
-    // Check if the click is outside the nav and menuToggle or on a nav link
-    if (
-      (!nav.contains(event.target) && !menuToggle.contains(event.target)) ||
-      event.target.classList.contains("nav__link")
-    ) {
-      nav.classList.remove("nav-open"); // Close nav
-      menuToggle.classList.remove("nav-open"); // Updates the menu toggle button
-      body.classList.remove("nav-open"); // Updates the body class
-    }
-  });
 
   // Handle contact form submission
   const contactForm = document.getElementById("contactForm");
@@ -36,79 +45,133 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Carousel
-  const carousel = document.querySelector(".carousel-slide"); // Carousel container
-  const prevButton = document.querySelector(".carousel-button.prev"); // Previous button
-  const nextButton = document.querySelector(".carousel-button.next"); // Next button
-  const dotsContainer = document.querySelector(".carousel-dots"); // Dots for carousel indicators
+  // ---- Gallery carousel ---------------------------------------------------
+  const carousel = document.querySelector(".carousel-slide");
+  const prevButton = document.querySelector(".carousel-button.prev");
+  const nextButton = document.querySelector(".carousel-button.next");
+  const dotsContainer = document.querySelector(".carousel-dots");
+  const carouselRegion = document.querySelector(".carousel-container");
 
-  if (carousel && prevButton && nextButton) {
-    let counter = 0; // Current slide index is set to 0
-    const size = carousel.clientWidth;
+  if (carousel && prevButton && nextButton && dotsContainer && carouselRegion) {
     const totalSlides = carousel.children.length;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let counter = 0;
+    let autoTimer = null;
+    let userPaused = reduceMotion; // honour reduced-motion: start paused
+    let hoverPaused = false;
 
-    // Create dots for each slide
+    // Read the slide width live so the carousel stays aligned after a resize
+    // (the original cached it once at load, which broke on window resize).
+    const slideWidth = () => carousel.clientWidth;
+
+    // Build one real <button> per slide so the dots are keyboard-operable.
+    const dots = [];
     for (let i = 0; i < totalSlides; i++) {
-      const dot = document.createElement("div");
-      dot.classList.add("dot");
-      dotsContainer.appendChild(dot); // Appends dot to the dots container
+      const dot = document.createElement("button");
+      dot.type = "button";
+      dot.className = "dot";
+      dot.setAttribute("aria-label", `Go to image ${i + 1} of ${totalSlides}`);
+      dot.addEventListener("click", () => goToSlide(i));
+      dotsContainer.appendChild(dot);
+      dots.push(dot);
     }
-
-    const dots = document.querySelectorAll(".dot"); // Gets all the dots
-    updateDots();
 
     function updateDots() {
       dots.forEach((dot, index) => {
-        dot.classList.toggle("active", index === counter);
+        const isActive = index === counter;
+        dot.classList.toggle("active", isActive);
+        if (isActive) {
+          dot.setAttribute("aria-current", "true");
+        } else {
+          dot.removeAttribute("aria-current");
+        }
       });
     }
 
-    // Function to move the slide
-    function moveSlide() {
-      carousel.style.transition = "transform 0.4s ease-in-out"; // Set transition for smooth movement
-      carousel.style.transform = `translateX(${-size * counter}px)`; // Moves the carousel
+    function render(animate = true) {
+      carousel.style.transition = animate && !reduceMotion ? "transform 0.4s ease-in-out" : "none";
+      carousel.style.transform = `translateX(${-slideWidth() * counter}px)`;
       updateDots();
     }
 
-    // Function to loop the slide when reaching the end
-    function loopSlide() {
-      if (counter >= totalSlides) {
-        counter = 0; // Reset to the first slide
-      } else if (counter < 0) {
-        counter = totalSlides - 1; // Goes to the last slide
+    function goToSlide(index) {
+      counter = (index + totalSlides) % totalSlides; // wrap around either end
+      render();
+    }
+    const nextSlide = () => goToSlide(counter + 1);
+    const prevSlide = () => goToSlide(counter - 1);
+
+    nextButton.addEventListener("click", nextSlide);
+    prevButton.addEventListener("click", prevSlide);
+
+    // Arrow keys move the carousel while any of its controls have focus.
+    carouselRegion.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowRight") {
+        event.preventDefault();
+        nextSlide();
+      } else if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        prevSlide();
       }
-      carousel.style.transition = "none"; //
-      carousel.style.transform = `translateX(${-size * counter}px)`;
-      setTimeout(() => {
-        carousel.style.transition = "transform 0.4s ease-in-out";
-      }, 10);
+    });
+
+    window.addEventListener("resize", () => render(false));
+
+    // ---- Auto-advance + pause/play (WCAG 2.2.2: moving content is pausable) --
+    const playToggle = document.createElement("button");
+    playToggle.type = "button";
+    playToggle.className = "carousel-play-toggle";
+
+    function applyAuto() {
+      const shouldRun = !userPaused && !hoverPaused;
+      if (shouldRun && !autoTimer) {
+        autoTimer = setInterval(nextSlide, 4000);
+      } else if (!shouldRun && autoTimer) {
+        clearInterval(autoTimer);
+        autoTimer = null;
+      }
+      // Stay silent while slides auto-advance; announce once it's paused.
+      carousel.setAttribute("aria-live", autoTimer ? "off" : "polite");
     }
 
-    // Event listener for next button
-    nextButton.addEventListener("click", () => {
-      counter++; // Increments the counter
-      moveSlide(); // Moves to the next slide
-      if (counter >= totalSlides) {
-        setTimeout(loopSlide, 400); // Loops back after a delay
+    function syncToggle() {
+      playToggle.textContent = userPaused ? "▶" : "❚❚"; // play / pause
+      playToggle.setAttribute("aria-pressed", String(userPaused));
+      playToggle.setAttribute(
+        "aria-label",
+        userPaused ? "Play automatic slideshow" : "Pause automatic slideshow"
+      );
+    }
+
+    playToggle.addEventListener("click", () => {
+      userPaused = !userPaused;
+      applyAuto();
+      syncToggle();
+    });
+    carouselRegion.appendChild(playToggle);
+
+    // Pause while the user hovers or keyboard-focuses anywhere in the carousel.
+    carouselRegion.addEventListener("mouseenter", () => {
+      hoverPaused = true;
+      applyAuto();
+    });
+    carouselRegion.addEventListener("mouseleave", () => {
+      hoverPaused = false;
+      applyAuto();
+    });
+    carouselRegion.addEventListener("focusin", () => {
+      hoverPaused = true;
+      applyAuto();
+    });
+    carouselRegion.addEventListener("focusout", (event) => {
+      if (!carouselRegion.contains(event.relatedTarget)) {
+        hoverPaused = false;
+        applyAuto();
       }
     });
 
-    // Event listener for the previous button
-    prevButton.addEventListener("click", () => {
-      counter--; // Decrements the counter
-      moveSlide(); // Move to the previous slide
-      if (counter < 0) {
-        setTimeout(loopSlide, 400); // Loops back again after a delay
-      }
-    });
-
-    // Automatically changes slide after every 4 seconds
-    setInterval(() => {
-      counter++; // Increments the counter
-      if (counter >= totalSlides) {
-        counter = 0; // Resets to the first slide
-      }
-      moveSlide(); // Move to the next slide
-    }, 4000);
+    render(false);
+    syncToggle();
+    applyAuto();
   }
 });

@@ -18,7 +18,7 @@
   --color-black: #000000;
   --color-gray: #bbbbbb; /* inactive carousel dot */
   --color-gray-dark: #333333; /* active carousel dot */
-  --color-green: #008000; /* success text */
+  --color-green: #137333; /* success text — darkened to pass AA on the light green surface */
   --color-green-surface: #e7f9e7; /* success message background */
 
   /* --- Semantic colour roles -------------------------------- */
@@ -96,6 +96,8 @@ header {
 header .container {
   color: var(--color-on-primary);
   display: flex; /* Flexbox layout */
+  flex-wrap: wrap; /* nav drops to its own row instead of overflowing the page */
+  row-gap: var(--space-sm);
   justify-content: space-between;
   align-items: center;
   width: 95%;
@@ -144,7 +146,7 @@ nav ul li a:hover {
   border-bottom: 3px solid var(--color-on-primary);
 }
 
-#home-page {
+.home-page {
   padding-top: var(--space-xl); /* Spacing at the top */
 }
 
@@ -317,12 +319,12 @@ nav ul li a:hover {
    here instead and written in rem so they respond to the user's
    browser font-size for better accessibility):
      - 48rem / 768px   : tablet — stack the two-column content blocks
-     - 96rem / 1536px  : large  — collapse the nav into a hamburger
-   The nav collapses at a wide breakpoint because the site title and
-   full horizontal nav are large; Phase 4 will compact the header so
-   this can drop to a more conventional ~64rem / 1024px.
+     - 64rem / 1024px  : collapse the nav into a hamburger
+   Above 64rem the header uses flex-wrap, so if the full nav doesn't
+   fit beside the title it drops to a second row rather than
+   overflowing — a graceful fallback on mid-width laptops.
    ------------------------------------------------------------------ */
-@media (max-width: 96rem) {
+@media (max-width: 64rem) {
   .menu-toggle {
     display: block; /* Show on smaller screens */
   }
@@ -550,6 +552,9 @@ footer .container {
 .dot {
   width: 12px;
   height: 12px;
+  padding: 0;
+  border: none;
+  appearance: none;
   background-color: var(--color-dot);
   border-radius: var(--radius-round);
   margin: 0 var(--space-2xs);
@@ -587,4 +592,78 @@ footer .container {
 
 .logo {
   margin-right: 50px;
+}
+
+/* ==================================================================
+   Accessibility helpers (Phase 4)
+   ================================================================== */
+
+/* Skip link: off-screen until focused, then slides into the top-left. */
+.skip-link {
+  position: absolute;
+  left: var(--space-md);
+  top: -4rem;
+  z-index: 2000;
+  padding: var(--space-xs) var(--space-md);
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  transition: top 0.2s ease-in-out;
+}
+
+.skip-link:focus {
+  top: var(--space-md);
+}
+
+/* Visible keyboard focus — a dark ring works on the light content areas. */
+:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* On dark surfaces (header nav, carousel controls) switch to a light ring. */
+header :focus-visible,
+.skip-link:focus-visible,
+.carousel-button:focus-visible,
+.carousel-play-toggle:focus-visible {
+  outline-color: var(--color-on-primary);
+}
+
+/* The skip target is focused programmatically, so it needs no focus ring. */
+main:focus {
+  outline: none;
+}
+
+/* Pause/play control for the carousel's auto-advance (built in script.js). */
+.carousel-play-toggle {
+  position: absolute;
+  top: var(--space-md);
+  right: var(--space-md);
+  z-index: 10;
+  padding: var(--space-2xs) var(--space-sm);
+  border: none;
+  border-radius: var(--radius-md);
+  background-color: var(--color-scrim);
+  color: var(--color-white);
+  font-size: var(--text-md);
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.carousel-play-toggle:hover {
+  background-color: rgba(0, 0, 0, 0.862);
+}
+
+/* Respect users who ask for less motion: neutralise transitions/animations. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
