@@ -21,28 +21,65 @@
           <div class="contact-form">
             <!--creating a contact form to collect the users feedback-->
             <h3>Questions? We'd love to hear from you!</h3>
-            <form id="contactForm" action="#" method="post">
+            <!--
+              TODO: replace YOUR_FORM_ID below with your real Formspree
+              endpoint (formspree.io -> New form -> copy the /f/xxxxxx id).
+              Client-side validation works without it; sending needs it.
+            -->
+            <form id="contactForm" action="https://formspree.io/f/xwvjqjyy" method="post">
               <div class="form-group">
-                <input type="text" name="name" placeholder="Name" aria-label="Your name" required />
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Email"
-                  aria-label="Your email address"
-                  required
-                />
+                <div class="field">
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    placeholder="Name"
+                    aria-label="Your name"
+                    autocomplete="name"
+                    aria-describedby="name-error"
+                    required
+                  />
+                  <span class="field-error" id="name-error"></span>
+                </div>
+                <div class="field">
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="Email"
+                    aria-label="Your email address"
+                    autocomplete="email"
+                    aria-describedby="email-error"
+                    required
+                  />
+                  <span class="field-error" id="email-error"></span>
+                </div>
               </div>
-              <textarea
-                name="message"
-                placeholder="Your Message"
-                aria-label="Your message"
-                required
-              ></textarea>
+              <div class="field">
+                <textarea
+                  id="message"
+                  name="message"
+                  placeholder="Your Message"
+                  aria-label="Your message"
+                  aria-describedby="message-error"
+                  required
+                ></textarea>
+                <span class="field-error" id="message-error"></span>
+              </div>
+              <!-- Subject line for the email Formspree forwards to you -->
+              <input type="hidden" name="_subject" value="New enquiry from the Pearl Diving site" />
+              <!-- Honeypot: hidden from people; bots that fill it are rejected -->
+              <input
+                type="text"
+                name="_gotcha"
+                tabindex="-1"
+                autocomplete="off"
+                aria-hidden="true"
+                style="display: none"
+              />
               <button type="submit" class="btn">Send Message</button>
             </form>
-            <p id="responseMessage" class="response-message" role="status" aria-live="polite">
-              Your message has been sent!
-            </p>
+            <p id="responseMessage" class="response-message" role="status" aria-live="polite"></p>
           </div>
         </section>
       </div>

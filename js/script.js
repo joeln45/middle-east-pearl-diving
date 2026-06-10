@@ -36,12 +36,102 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Handle contact form submission
+  // ---- Contact form: client-side validation + Formspree submit -----------
   const contactForm = document.getElementById("contactForm");
   if (contactForm) {
-    contactForm.addEventListener("submit", function (e) {
-      e.preventDefault(); // Prevent any default submission
-      document.getElementById("responseMessage").style.display = "block"; // Shows the response message
+    // Disable native validation only now that JS is running, so no-JS visitors
+    // still get the browser's checks while we control the messages here.
+    contactForm.setAttribute("novalidate", "");
+
+    const responseMessage = document.getElementById("responseMessage");
+    const submitButton = contactForm.querySelector("button[type='submit']");
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    const fields = [
+      {
+        input: contactForm.elements["name"],
+        errorId: "name-error",
+        validate: (value) => (value.trim() ? "" : "Please enter your name."),
+      },
+      {
+        input: contactForm.elements["email"],
+        errorId: "email-error",
+        validate: (value) => {
+          if (!value.trim()) return "Please enter your email address.";
+          return emailPattern.test(value.trim()) ? "" : "Please enter a valid email address.";
+        },
+      },
+      {
+        input: contactForm.elements["message"],
+        errorId: "message-error",
+        validate: (value) => (value.trim() ? "" : "Please enter a message."),
+      },
+    ];
+
+    function showFieldError(field, message) {
+      document.getElementById(field.errorId).textContent = message;
+      field.input.setAttribute("aria-invalid", message ? "true" : "false");
+    }
+
+    function validateField(field) {
+      const message = field.validate(field.input.value);
+      showFieldError(field, message);
+      return message === "";
+    }
+
+    // Instant feedback: check on blur, then clear the error as the user fixes
+    // it — but don't show an error before they've had a go at the field.
+    fields.forEach((field) => {
+      field.input.addEventListener("blur", () => validateField(field));
+      field.input.addEventListener("input", () => {
+        if (field.input.getAttribute("aria-invalid") === "true") {
+          validateField(field);
+        }
+      });
+    });
+
+    function setResponse(message, isError) {
+      responseMessage.textContent = message;
+      responseMessage.classList.toggle("is-error", isError);
+      responseMessage.style.display = "block";
+    }
+
+    contactForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      let firstInvalid = null;
+      fields.forEach((field) => {
+        if (!validateField(field) && !firstInvalid) firstInvalid = field.input;
+      });
+      if (firstInvalid) {
+        firstInvalid.focus();
+        return;
+      }
+
+      submitButton.disabled = true;
+      try {
+        const response = await fetch(contactForm.action, {
+          method: "POST",
+          body: new FormData(contactForm),
+          headers: { Accept: "application/json" },
+        });
+        if (response.ok) {
+          contactForm.reset();
+          fields.forEach((field) => showFieldError(field, ""));
+          setResponse("Thank you! Your message has been sent.", false);
+        } else {
+          const data = await response.json().catch(() => null);
+          const detail =
+            data && data.errors
+              ? data.errors.map((err) => err.message).join(" ")
+              : "Sorry, something went wrong. Please try again later.";
+          setResponse(detail, true);
+        }
+      } catch {
+        setResponse("Network error — please check your connection and try again.", true);
+      } finally {
+        submitButton.disabled = false;
+      }
     });
   }
 
