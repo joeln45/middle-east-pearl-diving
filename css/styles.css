@@ -411,7 +411,7 @@ textarea {
 footer .container {
   color: white;
   background-color: var(--primary-color);
-  font-size: 20px auto;
+  font-size: 1rem;
   display: flex;
   justify-content: center;
   max-width: 100%;
@@ -419,7 +419,7 @@ footer .container {
 
 /* Gallery page */
 .gallery-page .container {
-  max-width: 1200px;
+  max-width: 1000px;
   margin: 0 auto;
   padding: 20px;
   position: relative;
@@ -436,7 +436,7 @@ footer .container {
 .carousel-slide {
   display: flex; /* Flexbox for layout */
   width: 100%;
-  height: 600px;
+  height: 500px;
   transition: transform 0.4s ease-in-out;
 }
 
@@ -458,14 +458,6 @@ footer .container {
 
 .carousel-button.next {
   right: 20px;
-}
-
-.gallery-page .container {
-  max-width: 1000px;
-}
-
-.carousel-slide {
-  height: 500px; /* Fixed height for carousel */
 }
 
 .carousel-button {
