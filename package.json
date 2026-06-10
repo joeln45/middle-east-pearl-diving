@@ -1,0 +1,30 @@
+{
+  "name": "middle-east-pearl-diving",
+  "version": "1.0.0",
+  "description": "An immersive, responsive multimedia website preserving the cultural, social and economic heritage of pearl diving in the Middle East.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint:css": "stylelint **/*.css"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joeln45/middle-east-pearl-diving.git"
+  },
+  "keywords": [],
+  "author": "Joel Nirmal",
+  "license": "MIT",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/joeln45/middle-east-pearl-diving/issues"
+  },
+  "homepage": "https://github.com/joeln45/middle-east-pearl-diving#readme",
+  "devDependencies": {
+    "prettier": "^3.8.4",
+    "stylelint": "^17.13.0",
+    "stylelint-config-recommended": "^18.0.0"
+  },
+  "private": true
+}

@@ -60,7 +60,7 @@ cd middle-east-pearl-diving
 ```
 
 Then open `index.html` in your browser, or use the **Live Server** VS Code extension
-(right-click `index.html` → *Open with Live Server*) for auto-refresh while editing.
+(right-click `index.html` → _Open with Live Server_) for auto-refresh while editing.
 
 ## 🗺️ Roadmap
 
