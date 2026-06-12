@@ -67,3 +67,10 @@ const headerMount = document.getElementById("site-header");
 const footerMount = document.getElementById("site-footer");
 if (headerMount) headerMount.outerHTML = siteHeader();
 if (footerMount) footerMount.outerHTML = siteFooter();
+
+// Floating colour-theme toggle (wired up in script.js). Injected once here so
+// every page gets it without repeating the markup in each HTML file.
+document.body.insertAdjacentHTML(
+  "beforeend",
+  '<button class="theme-toggle" type="button"></button>'
+);
