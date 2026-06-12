@@ -676,7 +676,8 @@ header :focus-visible,
 .skip-link:focus-visible,
 .carousel-button:focus-visible,
 .carousel-play-toggle:focus-visible,
-.theme-toggle:focus-visible {
+.theme-toggle:focus-visible,
+.lightbox :focus-visible {
   outline-color: var(--color-on-primary);
 }
 
@@ -732,6 +733,118 @@ main:focus {
 
 .theme-toggle:hover {
   transform: scale(1.08);
+}
+
+/* ---- Gallery lightbox -------------------------------------------------- */
+.carousel-item img {
+  cursor: zoom-in;
+}
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 2500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  background-color: rgba(0, 0, 0, 0.9);
+}
+
+.lightbox[hidden] {
+  display: none;
+}
+
+.lightbox__figure {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: min(90vw, 1000px);
+}
+
+.lightbox__img {
+  width: 100%;
+  height: auto;
+  max-height: 82vh;
+  object-fit: contain;
+  border-radius: var(--radius-md);
+}
+
+.lightbox__caption {
+  margin-top: var(--space-sm);
+  color: var(--color-white);
+  text-align: center;
+  font-size: var(--text-md);
+}
+
+.lightbox__close,
+.lightbox__nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  border: none;
+  border-radius: var(--radius-round);
+  background-color: rgba(255, 255, 255, 0.15);
+  color: var(--color-white);
+  cursor: pointer;
+}
+
+.lightbox__close:hover,
+.lightbox__nav:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.lightbox__close {
+  position: absolute;
+  top: var(--space-md);
+  right: var(--space-md);
+  width: 2.75rem;
+  height: 2.75rem;
+  font-size: 1.75rem;
+}
+
+.lightbox__nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3rem;
+  height: 3rem;
+  font-size: 2rem;
+}
+
+.lightbox__nav--prev {
+  left: var(--space-md);
+}
+
+.lightbox__nav--next {
+  right: var(--space-md);
+}
+
+/* ---- Scroll-reveal animations ----------------------------------------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s ease;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---- Interactive map (History & Culture page) ------------------------- */
+.pearl-map-section {
+  margin-top: var(--space-2xl);
+}
+
+#pearl-map {
+  height: 450px;
+  border-radius: var(--radius-md);
 }
 
 /* Respect users who ask for less motion: neutralise transitions/animations. */

@@ -290,4 +290,137 @@ document.addEventListener("DOMContentLoaded", function () {
     syncToggle();
     applyAuto();
   }
+
+  // ---- Gallery lightbox --------------------------------------------------
+  const carouselItems = Array.from(document.querySelectorAll(".carousel-item"));
+  if (carouselItems.length) {
+    const slides = carouselItems.map((item) => {
+      const img = item.querySelector("img");
+      const caption = item.querySelector(".image-text");
+      return {
+        src: img.getAttribute("src"),
+        alt: img.getAttribute("alt") || "",
+        caption: caption ? caption.textContent.trim() : "",
+      };
+    });
+
+    document.body.insertAdjacentHTML(
+      "beforeend",
+      `<div class="lightbox" role="dialog" aria-modal="true" aria-label="Gallery image viewer" hidden>
+         <button class="lightbox__close" type="button" aria-label="Close image viewer">&times;</button>
+         <button class="lightbox__nav lightbox__nav--prev" type="button" aria-label="Previous image">&#10094;</button>
+         <figure class="lightbox__figure">
+           <img class="lightbox__img" src="" alt="" />
+           <figcaption class="lightbox__caption"></figcaption>
+         </figure>
+         <button class="lightbox__nav lightbox__nav--next" type="button" aria-label="Next image">&#10095;</button>
+       </div>`
+    );
+
+    const lightbox = document.querySelector(".lightbox");
+    const lightboxImg = lightbox.querySelector(".lightbox__img");
+    const lightboxCaption = lightbox.querySelector(".lightbox__caption");
+    const closeBtn = lightbox.querySelector(".lightbox__close");
+    const prevBtn = lightbox.querySelector(".lightbox__nav--prev");
+    const nextBtn = lightbox.querySelector(".lightbox__nav--next");
+    let current = 0;
+    let lastFocused = null;
+
+    function showSlide(index) {
+      current = (index + slides.length) % slides.length;
+      lightboxImg.setAttribute("src", slides[current].src);
+      lightboxImg.setAttribute("alt", slides[current].alt);
+      lightboxCaption.textContent = slides[current].caption;
+    }
+
+    function openLightbox(index, trigger) {
+      lastFocused = trigger || document.activeElement;
+      showSlide(index);
+      lightbox.hidden = false;
+      document.body.style.overflow = "hidden"; // freeze background scroll
+      closeBtn.focus();
+    }
+
+    function closeLightbox() {
+      lightbox.hidden = true;
+      document.body.style.overflow = "";
+      if (lastFocused) lastFocused.focus();
+    }
+
+    // Make each carousel image open the lightbox (mouse + keyboard).
+    carouselItems.forEach((item, index) => {
+      const img = item.querySelector("img");
+      img.style.cursor = "zoom-in";
+      img.setAttribute("role", "button");
+      img.setAttribute("tabindex", "0");
+      img.setAttribute("aria-label", `View image ${index + 1} larger`);
+      img.addEventListener("click", () => openLightbox(index, img));
+      img.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          openLightbox(index, img);
+        }
+      });
+    });
+
+    closeBtn.addEventListener("click", closeLightbox);
+    nextBtn.addEventListener("click", () => showSlide(current + 1));
+    prevBtn.addEventListener("click", () => showSlide(current - 1));
+
+    // Click on the dimmed backdrop (not the image or buttons) closes it.
+    lightbox.addEventListener("click", (event) => {
+      if (event.target === lightbox) closeLightbox();
+    });
+
+    // Esc closes, arrows navigate, and Tab is trapped inside the dialog.
+    lightbox.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        closeLightbox();
+      } else if (event.key === "ArrowRight") {
+        showSlide(current + 1);
+      } else if (event.key === "ArrowLeft") {
+        showSlide(current - 1);
+      } else if (event.key === "Tab") {
+        const order = [closeBtn, prevBtn, nextBtn];
+        const first = order[0];
+        const last = order[order.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
+    });
+  }
+
+  // ---- Scroll-reveal animations ------------------------------------------
+  const prefersReduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!prefersReduce && "IntersectionObserver" in window) {
+    const revealTargets = document.querySelectorAll(
+      "#feature-content, #quick-facts, .info_1, .page-title, .carousel-container, .contact-form"
+    );
+    const observer = new IntersectionObserver(
+      (entries, obs) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            obs.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -8% 0px" }
+    );
+    revealTargets.forEach((el) => {
+      const rect = el.getBoundingClientRect();
+      const alreadyInView = rect.top < window.innerHeight && rect.bottom > 0;
+      el.classList.add("reveal");
+      if (alreadyInView) {
+        el.classList.add("is-visible"); // already on screen — show without a flash
+      } else {
+        observer.observe(el);
+      }
+    });
+  }
 });
