@@ -1,0 +1,5 @@
+# Allow all crawlers full access
+User-agent: *
+Allow: /
+
+Sitemap: https://joeln45.github.io/middle-east-pearl-diving/sitemap.xml
