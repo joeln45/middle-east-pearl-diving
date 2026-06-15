@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "lint:css": "stylelint **/*.css"
+    "lint:css": "stylelint **/*.css",
+    "optimize:images": "node scripts/optimize-images.mjs"
   },
   "repository": {
     "type": "git",
@@ -23,6 +24,7 @@
   "homepage": "https://github.com/joeln45/middle-east-pearl-diving#readme",
   "devDependencies": {
     "prettier": "^3.8.4",
+    "sharp": "^0.35.1",
     "stylelint": "^17.13.0",
     "stylelint-config-recommended": "^18.0.0"
   },
