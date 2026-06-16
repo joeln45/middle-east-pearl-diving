@@ -18,7 +18,7 @@
   --color-black: #000000;
   --color-gray: #bbbbbb; /* inactive carousel dot */
   --color-gray-dark: #333333; /* active carousel dot */
-  --color-green: #137333; /* success text — darkened to pass AA on the light green surface */
+  --color-green: #137333; /* success text - darkened to pass AA on the light green surface */
   --color-green-surface: #e7f9e7; /* success message background */
   --color-red: #b3261e; /* error text on light surfaces */
   --color-red-light: #ffb4ab; /* error text on dark surfaces */
@@ -68,7 +68,7 @@
   --shadow-card: 0 6px 15px rgba(0, 0, 0, 0.15);
 }
 
-/* Dark theme — re-point the semantic roles; the raw palette stays the same.
+/* Dark theme - re-point the semantic roles; the raw palette stays the same.
    Thanks to the token system, this short block IS the whole dark mode. */
 [data-theme="dark"] {
   --color-text: #e7edf0;
@@ -335,11 +335,11 @@ nav ul li a:hover {
    (var() can't be used inside @media, so the values are documented
    here instead and written in rem so they respond to the user's
    browser font-size for better accessibility):
-     - 48rem / 768px   : tablet — stack the two-column content blocks
+     - 48rem / 768px   : tablet - stack the two-column content blocks
      - 64rem / 1024px  : collapse the nav into a hamburger
    Above 64rem the header uses flex-wrap, so if the full nav doesn't
    fit beside the title it drops to a second row rather than
-   overflowing — a graceful fallback on mid-width laptops.
+   overflowing - a graceful fallback on mid-width laptops.
    ------------------------------------------------------------------ */
 @media (max-width: 64rem) {
   .menu-toggle {
@@ -482,7 +482,7 @@ textarea {
   margin-bottom: var(--space-md);
 }
 
-/* Inline validation messages — light red so they read on the dark form. */
+/* Inline validation messages - light red so they read on the dark form. */
 .field-error {
   min-height: 1.25rem;
   margin-top: var(--space-2xs);
@@ -665,7 +665,7 @@ footer .container {
   top: var(--space-md);
 }
 
-/* Visible keyboard focus — a dark ring works on the light content areas. */
+/* Visible keyboard focus - a dark ring works on the light content areas. */
 :focus-visible {
   outline: 3px solid var(--color-primary);
   outline-offset: 2px;
@@ -707,7 +707,7 @@ main:focus {
   background-color: rgba(0, 0, 0, 0.862);
 }
 
-/* Floating colour-theme toggle — fixed bottom-right, visible at every width. */
+/* Floating colour-theme toggle - fixed bottom-right, visible at every width. */
 .theme-toggle {
   position: fixed;
   right: var(--space-md);
@@ -845,6 +845,32 @@ main:focus {
 #pearl-map {
   height: 450px;
   border-radius: var(--radius-md);
+}
+
+/* ---- 404 error page --------------------------------------------------- */
+.error-page {
+  text-align: center;
+  padding: var(--space-2xl) var(--space-md);
+}
+
+.error-code {
+  margin: 0;
+  font-size: var(--text-3xl);
+  font-weight: 700;
+  color: var(--color-accent);
+}
+
+.error-page p {
+  max-width: 36rem;
+  margin: 0 auto var(--space-lg);
+  font-size: var(--text-md);
+}
+
+.error-page .btn {
+  display: inline-block;
+  text-decoration: none;
+  font-weight: 700;
+  letter-spacing: 1px;
 }
 
 /* Respect users who ask for less motion: neutralise transitions/animations. */

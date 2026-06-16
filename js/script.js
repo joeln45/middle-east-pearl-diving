@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", function () {
       try {
         localStorage.setItem("theme", next);
       } catch (e) {
-        /* storage may be unavailable (private mode) — ignore */
+        /* storage may be unavailable (private mode) - ignore */
       }
       syncThemeToggle();
     });
@@ -106,7 +106,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Instant feedback: check on blur, then clear the error as the user fixes
-    // it — but don't show an error before they've had a go at the field.
+    // it - but don't show an error before they've had a go at the field.
     fields.forEach((field) => {
       field.input.addEventListener("blur", () => validateField(field));
       field.input.addEventListener("input", () => {
@@ -154,7 +154,7 @@ document.addEventListener("DOMContentLoaded", function () {
           setResponse(detail, true);
         }
       } catch {
-        setResponse("Network error — please check your connection and try again.", true);
+        setResponse("Network error - please check your connection and try again.", true);
       } finally {
         submitButton.disabled = false;
       }
@@ -417,7 +417,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const alreadyInView = rect.top < window.innerHeight && rect.bottom > 0;
       el.classList.add("reveal");
       if (alreadyInView) {
-        el.classList.add("is-visible"); // already on screen — show without a flash
+        el.classList.add("is-visible"); // already on screen - show without a flash
       } else {
         observer.observe(el);
       }

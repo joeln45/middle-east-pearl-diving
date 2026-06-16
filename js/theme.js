@@ -8,7 +8,7 @@
   try {
     stored = localStorage.getItem("theme");
   } catch (e) {
-    /* localStorage can be unavailable (e.g. private mode) — fall back below */
+    /* localStorage can be unavailable (e.g. private mode) - fall back below */
   }
   const prefersDark =
     window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;

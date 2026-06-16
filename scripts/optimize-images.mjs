@@ -8,7 +8,7 @@
 //
 // Run with:  npm run optimize:images
 // Safe to re-run for the WebP step (regenerates from untouched originals).
-// The in-place recompression is lossy — re-running re-compresses, so only
+// The in-place recompression is lossy - re-running re-compresses, so only
 // run it intentionally when the originals are in a known-good state.
 
 import sharp from "sharp";
@@ -22,7 +22,7 @@ const imagesDir = join(__dirname, "..", "images");
 const WEBP_QUALITY = 80;
 const JPEG_QUALITY = 80;
 
-// Photos rendered via <img> — each gets a .webp sibling.
+// Photos rendered via <img> - each gets a .webp sibling.
 const toWebp = [
   "image_history.jpeg",
   "image_technique.jpeg",
@@ -60,10 +60,10 @@ async function generateWebp() {
     const after = await sizeOf(out);
 
     // For small, already-efficient JPEGs, WebP can be larger. <picture> would
-    // force the browser to take it anyway, so discard those — the original wins.
+    // force the browser to take it anyway, so discard those - the original wins.
     if (after >= before) {
       await unlink(out);
-      console.log(`  ${name}  ${kb(before)} — kept original (WebP was ${kb(after)})`);
+      console.log(`  ${name}  ${kb(before)} - kept original (WebP was ${kb(after)})`);
     } else {
       console.log(`  ${name}  ${kb(before)} → ${webpName}  ${kb(after)}`);
     }
