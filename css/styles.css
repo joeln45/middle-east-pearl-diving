@@ -178,7 +178,8 @@ nav ul li a:hover {
   margin-bottom: var(--space-2xl);
   border-radius: var(--radius-md);
   width: 100%;
-  min-height: 850px; /* same tall, immersive hero as the original (now width-fluid, not fixed 1600px) */
+  aspect-ratio: 1600 / 850; /* same shape as the original 1600x850 hero, at any viewport width */
+  max-height: 850px; /* never taller than the original, even on very wide screens */
   box-sizing: border-box;
   padding: var(--space-2xl) var(--space-md);
   display: flex;
@@ -196,10 +197,11 @@ nav ul li a:hover {
   max-width: 600px;
 }
 
-/* On phones, 850px is taller than the screen, so cap the hero to the viewport. */
+/* On phones, the 1600:850 ratio is too short to fit the heading and button, so use a taller shape. */
 @media (max-width: 48rem) {
   #hero {
-    min-height: 70vh;
+    aspect-ratio: 3 / 4;
+    max-height: none;
   }
 }
 
