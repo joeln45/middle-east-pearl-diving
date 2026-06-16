@@ -177,9 +177,10 @@ nav ul li a:hover {
   text-align: center;
   margin-bottom: var(--space-2xl);
   border-radius: var(--radius-md);
-  width: 1600px;
-  height: 850px;
-  max-width: 100%;
+  width: 100%;
+  min-height: 850px; /* same tall, immersive hero as the original (now width-fluid, not fixed 1600px) */
+  box-sizing: border-box;
+  padding: var(--space-2xl) var(--space-md);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -187,12 +188,19 @@ nav ul li a:hover {
 }
 
 #hero h2 {
-  font-size: 3.5em;
+  font-size: clamp(2rem, 6vw, 3.5rem); /* scales down on small screens so it never overflows */
 }
 
 #hero p {
   font-size: 1.2em;
   max-width: 600px;
+}
+
+/* On phones, 850px is taller than the screen, so cap the hero to the viewport. */
+@media (max-width: 48rem) {
+  #hero {
+    min-height: 70vh;
+  }
 }
 
 /* Feature boxes layout */
