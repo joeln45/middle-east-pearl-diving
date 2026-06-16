@@ -7,8 +7,7 @@
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black)
 ![License: MIT](https://img.shields.io/badge/License-MIT-green)
 
-Live site: going live during the deployment phase at
-`https://joeln45.github.io/middle-east-pearl-diving/`
+Live site: https://joeln45.github.io/middle-east-pearl-diving/
 
 ## About
 
@@ -121,7 +120,7 @@ WebP through `<picture>` where that is smaller. There is a `sitemap.xml` and a
 - [x] Dark mode, gallery lightbox, scroll animations, interactive map
 - [x] Performance and SEO (image optimisation, meta tags)
 - [x] Full docs and design case study
-- [ ] Live deployment (GitHub Pages) and CI
+- [x] Live deployment (GitHub Pages) and CI
 
 ## Author
 
